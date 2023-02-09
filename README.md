@@ -40,21 +40,21 @@ Hackathon TIT/Hypercloud
 - Os arquivos json, onde ficam a base de dados, são gerados automaticamente em uma pasta dentro da aplicação com o nome de 'database'.
 - Nenhum dado sensível do jogador são armazenados, sendo principalmente o nome e o e-mail, para identificação do jogador na aplicação.
 - A aplicação está definida em:
-* Valhalla.App
-* Valhalha.Domain
-* Valhalla.Infraestrutura
+** Valhalla.App
+** Valhalha.Domain
+** Valhalla.Infraestrutura
 - As dependencias utilizadas são:
-* Blazored.Toast
-* System.Configuration.ConfigurationManager
-* Autofac
-* Autofac.Extensions.DependencyInjection
-* HtmlAgilityPack.NetCore
-* Blazorise
-* Blazorise.Icons.FontAwesome
-* Blazorise.Bootstrap
-* Blazorise.Components
-* Blazorise.DataGrid
-* System.Drawing.Common
+** Blazored.Toast
+** System.Configuration.ConfigurationManager
+** Autofac
+** Autofac.Extensions.DependencyInjection
+** HtmlAgilityPack.NetCore
+** Blazorise
+** Blazorise.Icons.FontAwesome
+** Blazorise.Bootstrap
+** Blazorise.Components
+** Blazorise.DataGrid
+** System.Drawing.Common
 
 ### Instalação da Aplicação
 
