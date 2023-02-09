@@ -1,4 +1,4 @@
-![alt text](https://github.com/alexsandonl/valhalla/logo.png?raw=true)
+![alt text](https://github.com/alexsandonl/valhalla/logo pequeno.png?raw=true)
 # Valhalla
 Hackathon TIT/Hypercloud
 
