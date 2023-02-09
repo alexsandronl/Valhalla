@@ -10,4 +10,37 @@ Hackathon TIT/Hypercloud
 - O Valhalla veio para ajudar nesta tarefa, atravéz de uma ferramenta gameficada que ajuda os colaboradores conhecerem os outros colaboradores da empresa de uma forma divertida, através de um jogo de cartas, estilo RPG, aonde cada colaborador tem as suas cartas, com seu nome, foto, informações do seu cargo e setor, bem como o seus pontos dentro da empresa baseado na sua hierarquia, nível de conhecimento e especializações.
 - E o mais legal é que o jogo motiva as pessoas a se especializarem para que o administrador da ferramenta, que muitas das vezes seria o papel do RH, possoa editar a sua carta e aumentar a sua pontuação.
 
+### Objetivo do Jogo
+
+- O jogo se baseia no objetivo de vencer cada rodada, mas sempre pensando em não gastar muitos pontos das carta, ou seja, utilizar o número de pontos suficiente para vencer cada rodada, para economizar cartas para as próximas rodadas.
+- Cada rodada é composta por turnos e em cada turno, o jogador poderá escolher dentro de um tempo, se ele coloca uma carta na mesa, ou se passa a vez.
+- No final ganha o jogador que conseguiu vencer o maior número de rodadas.
+
 ### Regras do Jogo
+
+- Assim que o jogador se sentir pronto, ele clica em 'Pronto', localizado abaixo do seu nome.
+- Cada jogador começa com um número especifico de cartas no deck, sorteadas aleatoriamente.
+- No primeiro turno, da primeira rodada, é obrigatório que o jogador comece jogando uma carta.
+- Para jogar uma carta, o jogador clica na carta, olha se a carta atende, e clica em 'Jogar a carta', sempre na sua vez de jogar.
+- Escolhendo uma carta, e colocando a carta na mesa, a soma dos seus pontos daquela rodada é mostrada do lado direito das suas cartas.
+- Em um turno, caso o jogador ache que os pontos que ele já colocou ate então naquela rodada, seja suficiente, o jogador poderá passar a vez.
+- Caso o jogador não tenha cartas na mesa, ele terá que obrigatóriamente passar a vez.
+- A cada passada de vez, o jogador ganha uma nova carta no seu deck para ser usada no próximo turno.
+- Assim acontece sucessivamente a cada rodada e a cada turno.
+- No final ganha o jogador que conseguiu vencer o maior número de rodadas.
+- E a pontuação final do jogador vencedor é calculado pela soma de todos os pontos das cartas jogadas na mesa em todas as rodadas, somado de 50 pontos pela vitória, e ainda acrescido de um bônus por cada carta que sobrou em seu deck.
+- A pontuação final do jogador naquele jogo, é somado ao seu ranking, que é mostrado na página inicial.
+
+### Características técnicas da aplicação
+
+- Aplicação desenvolvido a tecnologia Blazor Server utilizando C# na versão 7.0.
+- Iniciamente a aplicação usa como base de dados, arquivos json para cadastrar as cartas, jogadores, e resultado dos jogos, mas futuramente será migrado para um banco de dados gerenciavel, seja relacional ou no-sql.
+- A autenticação dos jogadores é feita utilizando o OAUTH2 do LinkenIn.
+- As configurações do jogo como, número de cartas iniciais, número de rodadas, número de turnos e tempo por turno, bem como a apiKey e secret do LinkedIn, são parametrizaveis no arquivo appsettings.json que fica na raiz da aplicação gerada.
+- Os arquivos json, onde ficam a base de dados, são gerados automaticamente em uma pasta dentro da aplicação com o nome de 'database'.
+- Nenhum dado sensível do jogador são armazenados, sendo principalmente o nome e o e-mail, para identificação do jogador na aplicação.
+
+### Instalação da Aplicação
+
+- Para instalar a aplicação, o usuário precisará baixar o jogo e compilar, gerando um docker, ou publicando os arquivos.
+- O local de publicação, deverá ter instalado o .Net 7.
