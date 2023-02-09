@@ -68,7 +68,7 @@ Hackathon TIT/Hypercloud
 - Para se cadastrar as cartas, o usuário deverá acessar o endereço: 'http(s)://<dominio>/CadastroDeCartas' e entrar com a senha de administração definida nas parametrizações da aplicação.
 - Para acessar os jogadores cadastrados, o usuário deverá acessar o endereço: 'http(s)://<dominio>/UsuariosCadastrados' e entrar com a senha de administração definida nas parametrizações da aplicação.
 
-### Melhorias a serem feitas:
+### Melhorias futuras a serem implementadas:
   - Troca da base de dados para um banco gerenciável.
   - Implementação para upload de avatares
   - Melhoria no UI e UX.
