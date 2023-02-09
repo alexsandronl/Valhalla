@@ -1,5 +1,4 @@
 ![alt text](https://github.com/alexsandronl/Valhalla/blob/main/logo.jpg?raw=true)
-# Valhalla
 Hackathon TIT/Hypercloud
 
 ### Problema a ser solucionado:
