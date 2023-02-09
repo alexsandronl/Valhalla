@@ -70,8 +70,8 @@ Time:
 
 - Para instalar a aplicação, o usuário precisará baixar o jogo e compilar, gerando um docker, ou publicando os arquivos.
 - No local onde a aplicação for publicada, deverá ter instalado o .Net 7, e sendo um servidor IIS, utiliza a verão Bundle.
-- Para se cadastrar as cartas, o usuário deverá acessar o endereço: 'http(s)://<dominio>/CadastroDeCartas' e entrar com a senha de administração definida nas parametrizações da aplicação.
-- Para acessar os jogadores cadastrados, o usuário deverá acessar o endereço: 'http(s)://<dominio>/UsuariosCadastrados' e entrar com a senha de administração definida nas parametrizações da aplicação.
+- Para se cadastrar as cartas, o usuário deverá acessar o endereço: 'http(s):/<dominio>/CadastroDeCartas' e entrar com a senha de administração definida nas parametrizações da aplicação.
+- Para acessar os jogadores cadastrados, o usuário deverá acessar o endereço: 'http(s):/<dominio>/UsuariosCadastrados' e entrar com a senha de administração definida nas parametrizações da aplicação.
 
 ### Melhorias futuras a serem implementadas:
   
