@@ -39,22 +39,22 @@ Hackathon TIT/Hypercloud
 - As configurações do jogo como, número de cartas iniciais, número de rodadas, número de turnos e tempo por turno, bem como a apiKey e secret do LinkedIn, e senha para acesso ao cadastro das carta, são parametrizaveis no arquivo appsettings.json que fica na raiz da aplicação gerada.
 - Os arquivos json, onde ficam a base de dados, são gerados automaticamente em uma pasta dentro da aplicação com o nome de 'database'.
 - Nenhum dado sensível do jogador são armazenados, sendo principalmente o nome e o e-mail, para identificação do jogador na aplicação.
-- A aplicação está definida em:
-** Valhalla.App
-** Valhalha.Domain
-** Valhalla.Infraestrutura
-- As dependencias utilizadas são:
-** Blazored.Toast
-** System.Configuration.ConfigurationManager
-** Autofac
-** Autofac.Extensions.DependencyInjection
-** HtmlAgilityPack.NetCore
-** Blazorise
-** Blazorise.Icons.FontAwesome
-** Blazorise.Bootstrap
-** Blazorise.Components
-** Blazorise.DataGrid
-** System.Drawing.Common
+**A aplicação está definida em:**
+* Valhalla.App
+* Valhalha.Domain
+* Valhalla.Infraestrutura
+**As dependencias utilizadas são:**
+* Blazored.Toast
+* System.Configuration.ConfigurationManager
+* Autofac
+* Autofac.Extensions.DependencyInjection
+* HtmlAgilityPack.NetCore
+* Blazorise
+* Blazorise.Icons.FontAwesome
+* Blazorise.Bootstrap
+* Blazorise.Components
+* Blazorise.DataGrid
+* System.Drawing.Common
 
 ### Instalação da Aplicação
 
