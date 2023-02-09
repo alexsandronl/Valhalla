@@ -29,6 +29,7 @@ Time:
 - No primeiro turno, da primeira rodada, é obrigatório que o jogador comece jogando uma carta.
 - Para jogar uma carta, o jogador clica na carta, olha se a carta atende, e clica em 'Jogar a carta', sempre na sua vez de jogar.
 - Escolhendo uma carta, e colocando a carta na mesa, a soma dos seus pontos daquela rodada é mostrada do lado direito das suas cartas.
+- As cartas com o numero de pontos na cor preta, significa que nao tem pontos extras, e as cartas que possuem pontos extras, fica com os pontos na cor azul.
 - Em um turno, caso o jogador ache que os pontos que ele já colocou ate então naquela rodada, seja suficiente, o jogador poderá passar a vez.
 - Caso o jogador não tenha cartas na mesa, ele terá que obrigatóriamente passar a vez.
 - A cada passada de vez, o jogador ganha uma nova carta no seu deck para ser usada no próximo turno.
