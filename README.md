@@ -66,4 +66,16 @@ Hackathon TIT/Hypercloud
 - Para instalar a aplicação, o usuário precisará baixar o jogo e compilar, gerando um docker, ou publicando os arquivos.
 - No local onde a aplicação for publicada, deverá ter instalado o .Net 7, e sendo um servidor IIS, utiliza a verão Bundle.
 - Para se cadastrar as cartas, o usuário deverá acessar o endereço: 'http(s)://<dominio>/CadastroDeCartas' e entrar com a senha de administração definida nas parametrizações da aplicação.
+- Para acessar os jogadores cadastrados, o usuário deverá acessar o endereço: 'http(s)://<dominio>/UsuariosCadastrados' e entrar com a senha de administração definida nas parametrizações da aplicação.
 
+### Melhorias a serem feitas:
+  - Troca da base de dados para um banco gerenciável.
+  - Implementação para upload de avatares
+  - Melhoria no UI e UX.
+  - Melhoria na IA para jogar contra o computador.
+  - Implementação do modo Multiplayer (a aplicação já possui diversos códigos já implementados para essa finalidade).
+  - Escrever testes unitários.
+  - Refatoração de códigos para uma melhor arquitetura.
+  - Implementação de novos atributos especiais para as cartas, onde uma carta poderá anular pontos de outras baseado no cargo, setor ou outra característica.
+  - Implementação de cenários de jogos, onde dependendo do cenário, algumas cartas podem ter mais ou menos vantagens.
+  - etc...
