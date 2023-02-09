@@ -33,14 +33,32 @@ Hackathon TIT/Hypercloud
 
 ### Características técnicas da aplicação
 
-- Aplicação desenvolvido a tecnologia Blazor Server utilizando C# na versão 7.0.
+- Aplicação desenvolvido a tecnologia Microsoft Blazor Server utilizando C# na versão 7.0.
 - Iniciamente a aplicação usa como base de dados, arquivos json para cadastrar as cartas, jogadores, e resultado dos jogos, mas futuramente será migrado para um banco de dados gerenciavel, seja relacional ou no-sql.
 - A autenticação dos jogadores é feita utilizando o OAUTH2 do LinkenIn.
-- As configurações do jogo como, número de cartas iniciais, número de rodadas, número de turnos e tempo por turno, bem como a apiKey e secret do LinkedIn, são parametrizaveis no arquivo appsettings.json que fica na raiz da aplicação gerada.
+- As configurações do jogo como, número de cartas iniciais, número de rodadas, número de turnos e tempo por turno, bem como a apiKey e secret do LinkedIn, e senha para acesso ao cadastro das carta, são parametrizaveis no arquivo appsettings.json que fica na raiz da aplicação gerada.
 - Os arquivos json, onde ficam a base de dados, são gerados automaticamente em uma pasta dentro da aplicação com o nome de 'database'.
 - Nenhum dado sensível do jogador são armazenados, sendo principalmente o nome e o e-mail, para identificação do jogador na aplicação.
+- A aplicação está definida em:
+* Valhalla.App
+* Valhalha.Domain
+* Valhalla.Infraestrutura
+- As dependencias utilizadas são:
+* Blazored.Toast
+* System.Configuration.ConfigurationManager
+* Autofac
+* Autofac.Extensions.DependencyInjection
+* HtmlAgilityPack.NetCore
+* Blazorise
+* Blazorise.Icons.FontAwesome
+* Blazorise.Bootstrap
+* Blazorise.Components
+* Blazorise.DataGrid
+* System.Drawing.Common
 
 ### Instalação da Aplicação
 
 - Para instalar a aplicação, o usuário precisará baixar o jogo e compilar, gerando um docker, ou publicando os arquivos.
-- O local de publicação, deverá ter instalado o .Net 7.
+- No local onde a aplicação for publicada, deverá ter instalado o .Net 7, e sendo um servidor IIS, utiliza a verão Bundle.
+- Para se cadastrar as cartas, o usuário deverá acessar o endereço: 'http(s)://<dominio>/CadastroDeCartas' e entrar com a senha de administração definida nas parametrizações da aplicação.
+
