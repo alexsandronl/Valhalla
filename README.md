@@ -76,7 +76,7 @@ Time:
 ### Melhorias futuras a serem implementadas:
   
   - Troca da base de dados para um banco gerenciável.
-  - Implementação para upload de avatares
+  - Implementação para upload de avatares.
   - Melhoria no UI e UX.
   - Melhoria na IA para jogar contra o computador.
   - Implementação do modo Multiplayer (a aplicação já possui diversos códigos já implementados para essa finalidade).
