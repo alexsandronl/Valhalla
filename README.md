@@ -3,7 +3,7 @@
 Hackathon TIT/Hypercloud
 
 Time:
-- Alexsandro Nunes
+- Alexsandro Nunes Lacerda
 - Carina Cláudio Oliveira
 - Rayssa Araújo de Oliveira
 
