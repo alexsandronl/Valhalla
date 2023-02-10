@@ -54,9 +54,9 @@ Time:
 * Valhalla.Infraestrutura (Biblioteca de serviços)
 * Valhalla.UnitTest (Testes unitários)
 * BlazorInputFile (Componente de upload de arquivos)
-![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 
 **As dependencias utilizadas são:**
+![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 * Blazored.Toast 4.0.0
 * System.Configuration.ConfigurationManager 7.0.0
 * Autofac 6.5.0
