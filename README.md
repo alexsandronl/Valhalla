@@ -56,17 +56,31 @@ Time:
 * BlazorInputFile (Componente de upload de arquivos)
 
 **As dependencias utilizadas são:**
-* Blazored.Toast
-* System.Configuration.ConfigurationManager
-* Autofac
-* Autofac.Extensions.DependencyInjection
-* HtmlAgilityPack.NetCore
-* Blazorise
-* Blazorise.Icons.FontAwesome
-* Blazorise.Bootstrap
-* Blazorise.Components
-* Blazorise.DataGrid
-* System.Drawing.Common
+* Blazored.Toast 4.0.0
+* System.Configuration.ConfigurationManager 7.0.0
+* Autofac 6.5.0
+* Autofac.Extensions.DependencyInjection 8.0.0
+* HtmlAgilityPack.NetCore 1.5.0.1
+* Blazorise 1.2.0
+* Blazorise.Icons.FontAwesome 1.2.0
+* Blazorise.Bootstrap 1.2.0
+* Blazorise.Components 1.2.0
+* Blazorise.DataGrid 1.2.0
+* System.Drawing.Common 7.0.0
+
+**Parametrizações no arquivo appsettings.json:**
+* "LinkedIn": {
+    "clientId": "{Cliente ID do LinkedIn }",
+    "clientSecret": "{Secret do LinkedIn }"
+    
+* "Tabuleiro": {
+    "NumeroCartasIniciais": {Cartas Iniciais},
+    "NumeroDeRodadasPorJogo": {Número de Rodadas por Jogo},
+    "NumeroDeTurnosTotaisPorRada": { Número de Turnos por Rodada},
+    "TempoPorTurno": "{Tempo por Turno no formato: hh:mm:ss"
+    
+* "Administracao": {
+    "SenhaDeAcesso": "{Senha de acesso a Administração}"
 
 ![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 
