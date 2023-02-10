@@ -49,12 +49,12 @@ Time:
 - A aplicação conta com configurações de Docker/Docker Compose.
 
 **A aplicação está divida nos seguintes projetos:**
-![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 * Valhalla.App (Aplicação Blazor Server)
 * Valhalha.Domain (Bliblioteca de domínio)
 * Valhalla.Infraestrutura (Biblioteca de serviços)
 * Valhalla.UnitTest (Testes unitários)
 * BlazorInputFile (Componente de upload de arquivos)
+![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 
 **As dependencias utilizadas são:**
 * Blazored.Toast 4.0.0
