@@ -68,6 +68,8 @@ Time:
 * Blazorise.DataGrid
 * System.Drawing.Common
 
+![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
+
 ### Instalação da Aplicação:
 
 - Para instalar a aplicação, o usuário precisará baixar o jogo e compilar, gerando um docker, ou publicando os arquivos.
