@@ -79,6 +79,7 @@ Time:
   
   - Troca da base de dados para um banco gerenciável.
   - Implementação para upload de avatares.
+  - Implementação de rotina para converter as imagens feitas upload (cartas e avatares) para que seja armazenados com tamanho pequeno mas qualidade aceitável.
   - Melhoria no UI e UX.
   - Melhoria na IA para jogar contra o computador.
   - Implementação do modo Multiplayer (a aplicação já possui diversos códigos já implementados para essa finalidade).
