@@ -49,6 +49,7 @@ Time:
 - A aplicação conta com configurações de Docker/Docker Compose.
 
 **A aplicação está divida nos seguintes projetos:**
+![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 * Valhalla.App (Aplicação Blazor Server)
 * Valhalha.Domain (Bliblioteca de domínio)
 * Valhalla.Infraestrutura (Biblioteca de serviços)
@@ -81,8 +82,6 @@ Time:
     
 * "Administracao": {
     "SenhaDeAcesso": "{Senha de acesso a Administração}"
-
-![alt text](https://github.com/alexsandronl/Valhalla/blob/main/Diagrama.png?raw=true)
 
 ### Instalação da Aplicação:
 
