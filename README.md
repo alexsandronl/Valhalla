@@ -89,6 +89,8 @@ Time:
 - No local onde a aplicação for publicada, deverá ter instalado o .Net 7, e sendo um servidor IIS, utiliza a verão Bundle.
 - Para se cadastrar as cartas, o usuário deverá acessar o endereço: "http(s)://{dominio}/CadastroDeCartas" e entrar com a senha de administração definida nas parametrizações da aplicação.
 - Para acessar os jogadores cadastrados, o usuário deverá acessar o endereço: "http(s)://{dominio}/UsuariosCadastrados" e entrar com a senha de administração definida nas parametrizações da aplicação.
+- Crie um app no console de developer do LinkedIn, para gerar o clientID e secretKey.
+- Adicione a url de callback com o dominio do seu site: http(s)://{dominio}/signin-linkedin
 
 ### Melhorias futuras a serem implementadas:
   
