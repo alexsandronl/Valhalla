@@ -1,0 +1,198 @@
+﻿@page "/"
+@inherits PageBase
+@layout EmptyLayout
+@inject ServicoDatabase servicoDatabase
+<style>
+    html, body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-image: linear-gradient(180deg, #000000 0%, #192128 33%, #273542 66%, #2c3d4d 100%);
+        background-repeat: no-repeat;
+        color: white;
+        height: 100%;
+        background-attachment: fixed;
+    }
+</style>
+<PageTitle>Valhalla - Início</PageTitle>
+
+<div style="box-shadow: 0px 15px 30px -15px #000    ; position: relative; margin: 0px; padding: 0px; height: 800px; width: 100%; background-image: url('/images/fundotelainicial.png'); background-repeat: no-repeat; background-size: auto; background-size: 100%; ">
+    <a style="color: #A36C32; cursor: pointer !important; float: right; margin: 8px; font-size: 12px;" href="mailto:alexsandro.lacerda@titcs.com.br"><strong>Deixe o seu feedback!</strong></a>
+    <div style="margin-top: 50px; margin-left: 50px; border-radius: 15px; height: 470px; width: 50%; position: absolute; background: linear-gradient(180.06deg, #060300 6.59%, #222A31 27.01%, #222A31 46.95%, #4B3F2E 80.78%, rgba(117, 82, 45, 0.53) 92.04%, rgba(145, 94, 45, 0.1) 99.46%); background-size: auto; background-size: 100%; background-repeat: no-repeat; background-attachment: fixed; ">
+        <br />
+        <div style="height: 100%; max-width: 100%; text-align: center; position: relative; ">
+            <center>
+                <img src="/images/logomarca.png" alt="Logomarca" style="text-align: center; height: 100%; width: 20%; object-fit: contain; ">
+            </center>
+            <br />
+            @if (AuthStat.Result?.User?.Identity?.IsAuthenticated ?? false)
+            {
+                <span style="font-size: 120%;">Seja bem-vindo, @AuthenticationStateUser.Identity.Name</span>
+                <br />
+                <button class="btn" style="color: white; width: 350px; height:100px; background-image: url('/images/botao01.png'); background-repeat: no-repeat; background-size: auto; background-size: 100%;" @onclick="CriarUmaSala">Vamos jogar!</button>
+                <br />
+                <button class="btn" style="color: white; width: 350px; height: 100px; background-image: url('/images/botao02.png'); background-repeat: no-repeat; background-size: auto; background-size: 100%;" @onclick="Desconectar">Desconectar</button>
+                <br />
+                <a style="color: lightblue; cursor: pointer !important" @onclick="RegrasDoJogo">Regras do Jogo</a>
+            }
+            else
+            {
+                <span style="font-size: 120%;">Seja bem vindo, para jogar é necessário se autenticar</span>
+                <br />
+                <form action="/Autenticacao/Conectar" method="post">
+                    <input type="hidden" name="Provider" value="LinkedIn" />
+                    <button class="btn" type="submit" style="color: white; width: 350px; height:100px; background-image: url('/images/botao01.png'); background-repeat: no-repeat; background-size: auto; background-size: 100%;" @onclick="CriarUmaSala">Vamos jogar!</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+<center>
+    <div style="">
+        <AuthorizeView>
+            <Authorized>
+                <br />
+                @if (Ranking != null)
+                {
+                    <Span style="font-size: 35px; font-weight: bold; font-family: Sansation; font-weight: 400; line-height: 28px; letter-spacing: 0em;">Ranking</Span>
+                    <br />
+                    <br />
+                    <Table Hoverable style="width: 80%;" FixedHeader FixedHeaderTableHeight="300px">
+                        <TableHeader ThemeContrast="ThemeContrast.Dark">
+                            <TableRow>
+                                <TableHeaderCell>Nome do Jogador</TableHeaderCell>
+                                <TableHeaderCell Style="text-align: center;">Último Jogo</TableHeaderCell>
+                                <TableHeaderCell Style="text-align: center;">Pontuação Geral</TableHeaderCell>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            @for (int i = 0; i < Ranking.Count; i++)
+                            {
+                                var ranking = Ranking.ToArray()[i];
+                                var cor = "color: white;";
+                                if (i == 0)
+                                    cor = "color: #FD9E41;";
+                                if (i == 1)
+                                    cor = "color: #C0C1C3;";
+                                if (i == 2)
+                                    cor = "color: #B17943;";
+                                <TableRow>
+                                    <TableRowCell Style="@cor">@ranking.JogadorNome</TableRowCell>
+                                    <TableRowCell Style="@(cor + " text-align: center;")">@(ranking.UltimoJogo.ToString("dd/MM/yyyy HH:mm"))</TableRowCell>
+                                        <TableRowCell Style="@(cor + " text-align: center;")">@ranking.PontuacaoTotal</TableRowCell>
+                                    </TableRow>
+                            }
+                        </TableBody>
+                    </Table>
+                }
+            </Authorized>
+        </AuthorizeView>
+    </div>
+</center>
+
+<Modal @ref="modalRef">
+    <ModalContent Centered Size="ModalSize.ExtraLarge" Style="color: black;">
+        <ModalHeader>
+            <strong>REGRAS JOGO</strong>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <strong>Objetivo do Jogo:</strong>
+            <br />
+            - O jogo se baseia no objetivo de vencer cada rodada, mas sempre pensando em não gastar muitos pontos das carta, ou seja, utilizar o número de pontos suficiente para vencer cada rodada, para economizar cartas para as próximas rodadas.
+            <br />
+            - Cada rodada é composta por turnos e em cada turno, o jogador poderá escolher dentro de um tempo, se ele coloca uma carta na mesa, ou se passa a vez.
+            <br />
+            - No final ganha o jogador que conseguiu vencer o maior número de rodadas.
+            <br /><br />
+            <strong>
+                Regras do Jogo:
+            </strong>
+            <br />
+            - Assim que o jogador se sentir pronto, ele clica em 'Pronto', localizado abaixo do seu nome.
+            <br />
+            - Cada jogador começa com um número especifico de cartas no deck, sorteadas aleatoriamente.
+            <br />
+            - No primeiro turno, da primeira rodada, é obrigatório que o jogador comece jogando uma carta.
+            <br />
+            - Para jogar uma carta, o jogador clica na carta, olha se a carta atende, e clica em 'Jogar a carta', sempre na sua vez de jogar.
+            <br />
+            - Escolhendo uma carta, e colocando a carta na mesa, a soma dos seus pontos daquela rodada é mostrada do lado direito das suas cartas.
+            <br />
+            - As cartas com o número de pontos na cor preta, significa que não tem pontos extras, e as cartas que possuem pontos extras, fica com os pontos na cor azul.
+            <br />
+            - Em um turno, caso o jogador ache que os pontos que ele já colocou ate então naquela rodada, seja suficiente, o jogador poderá passar a vez.
+            <br />
+            - Caso o jogador não tenha cartas na mesa, ele terá que obrigatóriamente passar a vez.
+            <br />
+            - A cada passada de vez, o jogador ganha uma nova carta no seu deck para ser usada no próximo turno.
+            <br />
+            - Assim acontece sucessivamente a cada rodada e a cada turno.
+            <br />
+            - No final ganha o jogador que conseguiu vencer o maior número de rodadas.
+            <br />
+            - E a pontuação final do jogador vencedor é calculado pela soma de todos os pontos das cartas jogadas na mesa em todas as rodadas, somado de 50 pontos pela vitória, e ainda acrescido de um bônus por cada carta que sobrou em seu deck.
+            <br />
+            - A pontuação final do jogador naquele jogo, é somado ao seu ranking, que é mostrado na página inicial.
+
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Light" Clicked="()=> { modalRef.Hide(); }">Fechar</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+
+    private List<Valhalla.Domain.Models.JogadorRanking> Ranking { get; set; }
+    private Modal modalRef;
+
+    protected override void Constructor()
+    {
+        if (AuthStat.Result?.User?.Identity?.IsAuthenticated ?? false)
+        {
+            var NomeCompleto = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            var PrimeiroNome = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var Identificacao = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var Email = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
+            if (servicoDatabase.BuscaTodosUsuarios().Count(p => p.Identificador == Identificacao) == 0)
+            {
+                servicoDatabase.AdicionaNovoUsuario(new Domain.Entidades.Usuario()
+                    {
+                        Email = Email,
+                        Identificador = Identificacao,
+                        NomeCompleto = NomeCompleto,
+                        PrimeiroNome = PrimeiroNome
+                    });
+            }
+
+            Ranking = new List<JogadorRanking>();
+            var jogosPorJogador = servicoDatabase.BuscaTodosJogos().GroupBy(p => p.Jogador01.Identificador);
+            foreach (var jogador in jogosPorJogador)
+            {
+                var totalPontos = jogador.Where(p => p.JogoStatusFinal == Domain.Entidades.Jogo.JogoStatusFinalEnum.Ganhou || p.JogoStatusFinal == Domain.Entidades.Jogo.JogoStatusFinalEnum.Empatou).Sum(p => p.PontosJogador01);
+                var ultimoJogo = jogador.OrderByDescending(p => p.DataHoraDoJogo).First().DataHoraDoJogo;
+                var nomeJogador = jogador.OrderByDescending(p => p.DataHoraDoJogo).First().Jogador01.NomeCompleto;
+                var numerojogos = jogador.Count();
+                Ranking.Add(new JogadorRanking(nomeJogador, totalPontos, ultimoJogo, numerojogos));
+            }
+            Ranking = Ranking.OrderByDescending(p => p.PontuacaoTotal).ThenBy(p => p.NumeroDeJogos).ToList();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Desconectar()
+    {
+        nav.NavigateTo("/Autenticacao/Desconectar", true);
+    }
+
+    public void CriarUmaSala()
+    {
+        nav.NavigateTo("/tabuleiro");
+    }
+
+    public void RegrasDoJogo()
+    {
+        modalRef.Show();
+    }
+
+}

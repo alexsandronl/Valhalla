@@ -1,0 +1,143 @@
+﻿<style>
+    .rotateimg180 {
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+</style>
+
+<div class="parent @CustomClass" style="position: relative; @CustomStyle" @onclick="VerDetalhesDaCarta">
+    @if (IndicadorMonte)
+    {
+        <img src="/images/cartabackmonte.png" class="@(IndicadorCartaRotacionada ? "rotateimg180" : "")" style="height: 100%; width: 100%; object-fit: contain; " />
+    }
+    else if (IndicadorCartaEscondida)
+    {
+        <img src="/images/cartaback.png" class="@(IndicadorCartaRotacionada ? "rotateimg180" : "")" style="height: 100%; width: 100%; object-fit: contain; " />
+    }
+    else
+    {
+        <div style="width: 100%; height: 100%; top: 0; left: 0; ">
+            <img src="/images/cartaFront.png" style="height: 100%; width: 100%; object-fit: contain; " />
+        </div>
+        <div style="position: absolute; z-index: 9; width: 70%; bottom: 10%; left: 15%;">
+            <img src="data:image/jpeg;base64,@carta.Imagem.ToStringBase64()" style="position: relative; border-radius: 5px; height: 100%; width: 100%; object-fit: contain; " />
+            @*<img src="/images/desenvolvedor.png" style="position: relative; border-radius: 5px; height: 100%; width: 100%; object-fit: contain; " />*@
+        </div>
+        <div style="position: absolute; z-index: 10; width: 30%; bottom: 13%; left: 18%;">
+            <img src="/images/CommonShape.png" style="position: relative; height: 100%; width: 100%; object-fit: contain; " />
+        </div>
+        <center>
+            <div style="position: absolute; z-index: 11; width: 70%; bottom: 19%; left: -1%;">
+                <span style="font-size: @(IndicadorDeck ? "120":"138")%; @(carta.AtributosEspeciais.Count == 0 ? "color: black;" : "color: blue; font-weight: bold;")  position: relative; object-fit: contain; ">@carta.PontoTotal</span>
+            </div>
+        </center>
+        <center>
+            <div style="position: absolute; z-index: 11; width: 70%; top: 7%; left: 15%;">
+                <span style="display: inline-block; line-height: 114%; font-size: @(IndicadorDeck ? "65":"79")%; color: black; position: relative; object-fit: contain; ">@carta.Titulo</span>
+            </div>
+        </center>
+    }
+
+</div>
+
+@if (carta != null)
+{
+    <Modal @ref="modalRef">
+        <ModalContent Centered>
+            <ModalBody>
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is4">
+                        <div class="parent" style="position: relative; height: 100%; display: inline-block; text-align: center;">
+                            <div style="width: 100%; height: 100%; top: 0; left: 0; ">
+                                <img src="/images/cartaFront.png" style="height: 100%; width: 100%; object-fit: contain; " />
+                            </div>
+                            <div style="position: absolute; z-index: 9; width: 70%; bottom: 10%; left: 15%;">
+                                <img src="data:image/jpeg;base64,@carta.Imagem.ToStringBase64()" style="position: relative; border-radius: 5px; height: 100%; width: 100%; object-fit: contain; " />
+                            </div>
+                            <div style="position: absolute; z-index: 10; width: 30%; bottom: 13%; left: 18%;">
+                                <img src="/images/CommonShape.png" style="position: relative; height: 100%; width: 100%; object-fit: contain; " />
+                            </div>
+                            <center>
+                                <div style="position: absolute; z-index: 11; width: 70%; bottom: 19%; left: -1%;">
+                                    <span style="font-size: @(IndicadorDeck ? "120":"138")%; @(carta.AtributosEspeciais.Count == 0 ? "color: black;" : "color: blue; font-weight: bold;")  position: relative; object-fit: contain; ">@carta.PontoTotal</span>
+                                </div>
+                            </center>
+                            <center>
+                                <div style="position: absolute; z-index: 11; width: 70%; top: 7%; left: 15%;">
+                                    <span style="display: inline-block; line-height: 114%; font-size: @(IndicadorDeck ? "65":"79")%; color: black; position: relative; object-fit: contain; ">@carta.Titulo</span>
+                                </div>
+                            </center>
+                        </div>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is8" TextAlignment="TextAlignment.Start">
+                        <div style="overflow-y: scroll !important; height: 195px; ">
+                            <span>
+                                <strong>@carta.Titulo</strong>
+                                <br />
+                                <span style="font-size: 80%;"><strong>Cargo: </strong>@carta.Cargo</span>
+                                <br />
+                                <span style="font-size: 80%;"><strong>Setor: </strong>@carta.Setor</span>
+                                <br />
+                                <span style="font-size: 80%;">@carta.Descricao</span>
+                                <br />
+                                <span style="font-size: 80%;"><strong>Ponto(s): </strong>@carta.Ponto</span>
+                                <br />
+                                @foreach (var atributo in carta.AtributosEspeciais)
+                                {
+                                    <span style="font-size: 80%;"><strong>@atributo.Titulo: </strong>+@atributo.PontoAdicional ponto(s)</span>
+
+                                    <br />
+                                }
+                            </span>
+                        </div>
+                    </Column>
+                </Row>
+
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Light" Clicked="@HideModal">Fechar</Button>
+                @if (IndicadorDeck && tabuleiroRazor.TempoDoTurnoJogador01 != null)
+                {
+                    <Button Color=" Color.Secondary" Clicked="@JogarACarta">Jogar a carta</Button>
+                }
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
+
+@code {
+    [Parameter] public Valhalla.Domain.Models.Carta carta { get; set; }
+    [Parameter] public Valhalla.App.Pages.Tabuleiro.Tabuleiro tabuleiroRazor { get; set; }
+    [Parameter] public string CustomClass { get; set; }
+    [Parameter] public string CustomStyle { get; set; }
+    [Parameter] public bool IndicadorCartaEscondida { get; set; }
+    [Parameter] public bool IndicadorCartaRotacionada { get; set; }
+    [Parameter] public bool IndicadorMonte { get; set; }
+    [Parameter] public bool IndicadorDeck { get; set; }
+
+    private Modal modalRef;
+
+    public void VerDetalhesDaCarta()
+    {
+        if (carta != null && IndicadorCartaEscondida == false)
+        {
+            modalRef.Show();
+        }
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+    private Task JogarACarta()
+    {
+        tabuleiroRazor.TocaDarCarta();
+        tabuleiroRazor.tabuleiro.JogaUmaCartaJogador01(carta);
+        return modalRef.Hide();
+    }
+}
+

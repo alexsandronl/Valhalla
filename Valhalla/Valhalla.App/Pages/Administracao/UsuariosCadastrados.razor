@@ -1,0 +1,116 @@
+﻿@page "/UsuariosCadastrados"
+@inherits PageBase
+@inject IToastService toastService
+@inject ServicoDatabase servicoDatabase
+@using Blazored.Toast.Configuration
+
+<BlazoredToasts Position="ToastPosition.TopRight"
+                IconType="IconType.FontAwesome"
+                Timeout="5"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-thumbs-up"
+                ErrorIcon="fa fa-bug"
+                ShowProgressBar="true"
+                ShowCloseButton="true" />
+
+<PageTitle>Valhalla - Usuarios Cadastrados</PageTitle>
+<div style="height: 100%; max-width: 100%; text-align: center; position: relative; ">
+    <center><img src="/images/logomarca.png" alt="Logomarca" style="text-align: center; height: 100%; width: 20%; object-fit: contain; "></center>
+</div>
+<center>
+    <div style="color: white;">
+        <AuthorizeView>
+            <Authorized>
+                Seja bem-vindo, @AuthenticationStateUser.Identity.Name
+                <br /><br />
+                @if (Autenticado)
+                {
+                    @if (Usuarios != null)
+                    {
+                        <Card Style="width: 800px;">
+                            <CardBody>
+                                <CardTitle Size="3" Style="color: darkblue;">
+                                    Usuários
+                                </CardTitle>
+                                <Table Hoverable ThemeContrast="ThemeContrast.Light" FixedHeader FixedHeaderTableHeight="300px">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHeaderCell Style="text-align: center;">Nome completo</TableHeaderCell>
+                                            <TableHeaderCell Style="text-align: center;">E-mail</TableHeaderCell>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        @foreach (var usuario in Usuarios)
+                                        {
+                                            <TableRow>
+                                                <TableRowCell Style="text-align: center;">@usuario.NomeCompleto</TableRowCell>
+                                                <TableRowCell Style="text-align: center;">@usuario.Email</TableRowCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </CardBody>
+                        </Card>
+                    }
+                }
+                else
+                {
+                    <Span>Digite a senha: </Span><InputText type="password" @bind-Value="Senha" /> <Button class="btn btn-success btn-sm" @onclick="Autenticar">Confirmar!</Button>
+                }
+
+            </Authorized>
+            <NotAuthorized>
+                Acesso não autorizado
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</center>
+
+
+@code {
+
+    private List<Valhalla.Domain.Entidades.Usuario> Usuarios { get; set; }
+
+    private Valhalla.Domain.Entidades.Usuario UsuarioLogado { get; set; }
+    private bool Autenticado { get; set; }
+    private string Senha { get; set; }
+
+    protected override void Constructor()
+    {
+        if (AuthStat.Result?.User?.Identity?.IsAuthenticated ?? false)
+        {
+            var NomeCompleto = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            var PrimeiroNome = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var Identificacao = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var Email = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
+            UsuarioLogado = servicoDatabase.BuscaTodosUsuarios().SingleOrDefault(p => p.Identificador == Identificacao);
+
+            if (UsuarioLogado == null)
+            {
+                UsuarioLogado = new Domain.Entidades.Usuario()
+                {
+                    Email = Email,
+                    Identificador = Identificacao,
+                    NomeCompleto = NomeCompleto,
+                    PrimeiroNome = PrimeiroNome
+                };
+                servicoDatabase.AdicionaNovoUsuario(UsuarioLogado);
+            }
+
+            Usuarios = servicoDatabase.BuscaTodosUsuarios();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Autenticar()
+    {
+        if (Senha == Environment.GetEnvironmentVariable("SenhaDeAcesso"))
+            Autenticado = true;
+        else
+            toastService.ShowError("Senha incorreta!");
+
+    }
+
+
+}

@@ -1,0 +1,32 @@
+﻿<Blazorise.ThemeProvider Theme="@theme">
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>
+                <PageTitle>404 - Página não encontrada</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <p role="alert">Desculpe mas o endereço não foi localizado</p>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </CascadingAuthenticationState>
+</Blazorise.ThemeProvider>
+
+@code {
+    private Theme theme = new Theme
+        {
+            IsGradient = true,
+            ColorOptions = new ThemeColorOptions
+            {
+                Primary = "#eeeeee",
+                Secondary = "#A65529",
+                Danger = "#FC3E3E",
+                Dark = "#222222",
+                Success = "#4CDC33"
+                // other
+            }
+        };
+}

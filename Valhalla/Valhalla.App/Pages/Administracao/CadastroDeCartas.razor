@@ -1,0 +1,351 @@
+﻿@page "/CadastroDeCartas"
+@inherits PageBase
+@inject ServicoDatabase servicoDatabase
+@inject IToastService toastService
+@inject Valhalla.Domain.Interfaces.IFileUpload fileUpload
+@using Blazored.Toast.Configuration
+
+<BlazoredToasts Position="ToastPosition.TopRight"
+                IconType="IconType.FontAwesome"
+                Timeout="5"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-thumbs-up"
+                ErrorIcon="fa fa-bug"
+                ShowProgressBar="true"
+                ShowCloseButton="true" />
+
+<PageTitle>Valhalla - Cadastro de Cartas</PageTitle>
+<div style="height: 100%; max-width: 100%; text-align: center; position: relative; ">
+    <center><img src="/images/logomarca.png" alt="Logomarca" style="text-align: center; height: 100%; width: 20%; object-fit: contain; "></center>
+</div>
+<center>
+    <div style="color: white;">
+        <AuthorizeView>
+            <Authorized>
+                Seja bem-vindo, @AuthenticationStateUser.Identity.Name
+                <br /><br />
+                @if (Autenticado)
+                {
+                    <button class="btn btn-sm btn-success" @onclick="CriarCarta">Criar uma nova carta</button>
+                    <a class="btn btn-sm btn-danger" href="/Autenticacao/Desconectar">Desconectar</a>
+                    <br />
+                    <br />
+                    @if (ListaDeCartas != null)
+                    {
+                        <Card Style="width: 90%;">
+                            <CardBody>
+                                <CardTitle Size="3" Style="color: darkblue;">
+                                    Lista de Cartas
+                                </CardTitle>
+                                <Table Hoverable ThemeContrast="ThemeContrast.Light">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHeaderCell>Titulo</TableHeaderCell>
+                                            <TableHeaderCell>Setor</TableHeaderCell>
+                                            <TableHeaderCell>Cargo</TableHeaderCell>
+                                            <TableHeaderCell Style="text-align: right;">Ponto Padrao</TableHeaderCell>
+                                            <TableHeaderCell Style="text-align: right;">Pontos Extras</TableHeaderCell>
+                                            <TableHeaderCell Style="text-align: right;">Total de Pontos</TableHeaderCell>
+                                            <TableHeaderCell Style="text-align: center;"></TableHeaderCell>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        @foreach (var carta in ListaDeCartas)
+                                        {
+                                            <TableRow>
+                                                <TableRowCell>@carta.Titulo</TableRowCell>
+                                                <TableRowCell>@carta.Cargo</TableRowCell>
+                                                <TableRowCell>@carta.Setor</TableRowCell>
+                                                <TableRowCell Style="text-align: right;">@carta.Ponto</TableRowCell>
+                                                <TableRowCell Style="text-align: right;">@carta.AtributosEspeciais.Sum(p => p.PontoAdicional)</TableRowCell>
+                                                <TableRowCell Style="text-align: right;">@(carta.Ponto + carta.AtributosEspeciais.Sum(p => p.PontoAdicional))</TableRowCell>
+                                                <TableRowCell Style="text-align: center;">
+                                                    <Button ElementId="btnSave" Size="Size.ExtraSmall" PreventDefaultOnSubmit Color="Color.Success" Clicked="() => EditarCarta(carta.ID)">Editar</Button>
+                                                    <Button ElementId="btnSave" Size="Size.ExtraSmall" PreventDefaultOnSubmit Color="Color.Danger" Clicked="() => ExcluirCarta(carta.ID)">Remover</Button>
+                                                </TableRowCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </CardBody>
+                        </Card>
+                    }
+                }
+                else
+                {
+                    <Span>Digite a senha: </Span><InputText type="password" @bind-Value="Senha" /> <Button class="btn btn-success btn-sm" @onclick="Autenticar">Confirmar!</Button>
+                }
+            </Authorized>
+            <NotAuthorized>
+                Alem da Senha de Acesso você precisará estar logado para te identificarmos!
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</center>
+<br /><br />
+
+<Modal @ref="modalRef">
+    <ModalContent Centered Size="ModalSize.Large" Scrollable>
+        @if (CartaModal != null)
+        {
+            <ModalHeader>
+                <strong>@AcaoModal</strong>
+            </ModalHeader>
+            <ModalBody>
+                <Fields>
+                    <Field>
+                        <FieldLabel>Título</FieldLabel>
+                        <TextEdit @bind-Text="@CartaModal.Titulo" MaxLength="30" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Ponto Padrão</FieldLabel>
+                        <NumericPicker TValue="int" Min="1" Max="99" @bind-Value="@CartaModal.Ponto" />
+                    </Field>
+                </Fields>
+                <Fields>
+                    <Field>
+                        <FieldLabel>Setor</FieldLabel>
+                        <TextEdit @bind-Text="@CartaModal.Setor" MaxLength="20" />
+                    </Field>
+                    <Field>
+                        <FieldLabel>Cargo</FieldLabel>
+                        <TextEdit @bind-Text="@CartaModal.Cargo" MaxLength="30" />
+                    </Field>
+                </Fields>
+                <Field>
+                    <FieldLabel>Descrição</FieldLabel>
+                    <TextEdit @bind-Text="@CartaModal.Descricao" MaxLength="300" />
+                </Field>
+                <Fields>
+                    <Field>
+                        <FieldLabel>Imagem</FieldLabel>
+                        <TextEdit Text="@CartaModal.NomeImagem" ReadOnly="true" />
+                        <BlazorInputFile.InputFile OnChange="HandleFileSelected" />
+                        <Button class="btn btn-success" @onclick="EnviaFoto">Enviar foto</Button>
+                    </Field>
+                </Fields>
+
+                <DataGrid TItem="Valhalla.Domain.Entidades.AtributoEspecial"
+                          Data="@CartaModal.AtributosEspeciais"
+                          @bind-SelectedRow="@AtributoSelecionado"
+                          Editable
+                          Responsive
+                          ShowPager
+                          EditMode="DataGridEditMode.Popup" Context="atributo">
+                    <DataGridColumns>
+                        <DataGridCommandColumn NewCommandAllowed="false" EditCommandAllowed="false" DeleteCommandAllowed="false">
+                            <SaveCommandTemplate Context="atributo">
+                                <Button ElementId="btnSave" Type="ButtonType.Submit" PreventDefaultOnSubmit Color="Color.Primary" Clicked="@atributo.Clicked">Confirmar</Button>
+                            </SaveCommandTemplate>
+                            <CancelCommandTemplate Context="atributo">
+                                <Button ElementId="btnCancel" Color="Color.Secondary" Clicked="@atributo.Clicked">Cancelar</Button>
+                            </CancelCommandTemplate>
+                        </DataGridCommandColumn>
+                        <DataGridColumn Field="@nameof(Valhalla.Domain.Entidades.AtributoEspecial.Titulo)" Caption="Título" Sortable="false" Editable />
+                        <DataGridColumn Field="@nameof(Valhalla.Domain.Entidades.AtributoEspecial.PontoAdicional)" Caption="Ponto" Editable />
+                    </DataGridColumns>
+                    <ButtonRowTemplate>
+                        <Button Color="Color.Success" Clicked="atributo.NewCommand.Clicked">Novo atributo</Button>
+                        <Button Color="Color.Primary" Disabled="(AtributoSelecionado is null)" Clicked="atributo.EditCommand.Clicked">Editar</Button>
+                        <Button Color="Color.Danger" Disabled="(AtributoSelecionado is null)" Clicked="atributo.DeleteCommand.Clicked">Remover</Button>
+                    </ButtonRowTemplate>
+                </DataGrid>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Light" Clicked="@HideModal">Fechar</Button>
+                <Button Color=" Color.Success" Clicked="@SalvarCarta">Salvar</Button>
+            </ModalFooter>
+        }
+    </ModalContent>
+</Modal>
+
+
+@code {
+
+    private List<Valhalla.Domain.Entidades.Carta> ListaDeCartas { get; set; }
+    private Valhalla.Domain.Entidades.Usuario UsuarioLogado { get; set; }
+
+    private Modal modalRef;
+    private Valhalla.Domain.Entidades.Carta CartaModal { get; set; }
+    private byte[] ImagemCartaModal { get; set; }
+    private Valhalla.Domain.Entidades.AtributoEspecial AtributoSelecionado { get; set; }
+    private string AcaoModal { get; set; }
+
+    private bool Autenticado { get; set; }
+    private string Senha { get; set; }
+
+    protected override void Constructor()
+    {
+        if (AuthStat.Result?.User?.Identity?.IsAuthenticated ?? false)
+        {
+            var NomeCompleto = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            var PrimeiroNome = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var Identificacao = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var Email = AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
+            UsuarioLogado = servicoDatabase.BuscaTodosUsuarios().SingleOrDefault(p => p.Identificador == Identificacao);
+
+            if (UsuarioLogado == null)
+            {
+                UsuarioLogado = new Domain.Entidades.Usuario()
+                {
+                    Email = Email,
+                    Identificador = Identificacao,
+                    NomeCompleto = NomeCompleto,
+                    PrimeiroNome = PrimeiroNome
+                };
+                servicoDatabase.AdicionaNovoUsuario(UsuarioLogado);
+            }
+
+            ListaDeCartas = servicoDatabase.BuscaTodasCartas();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Autenticar()
+    {
+        if (Senha == Environment.GetEnvironmentVariable("SenhaDeAcesso"))
+            Autenticado = true;
+        else
+            toastService.ShowError("Senha incorreta!");
+    
+    }
+
+    public void CriarCarta()
+    {
+        AcaoModal = "Nova Carta";
+        CartaModal = new Domain.Entidades.Carta();
+        CartaModal.Ponto = 1;
+        InvokeAsync(StateHasChanged);
+        modalRef.Show();
+    }
+
+    public void EditarCarta(Guid id)
+    {
+        AcaoModal = "Editar Carta";
+        var cartaEditar = ListaDeCartas.Single(p => p.ID == id);
+        CartaModal = new Domain.Entidades.Carta();
+        CartaModal.ID = cartaEditar.ID;
+        CartaModal.Titulo = cartaEditar.Titulo;
+        CartaModal.Descricao = cartaEditar.Descricao;
+        CartaModal.Setor = cartaEditar.Setor;
+        CartaModal.Cargo = cartaEditar.Cargo;
+        CartaModal.Ponto = cartaEditar.Ponto;
+        CartaModal.NomeImagem = cartaEditar.NomeImagem;
+        CartaModal.AtributosEspeciais = cartaEditar.AtributosEspeciais;
+        InvokeAsync(StateHasChanged);
+        modalRef.Show();
+    }
+
+    public void SalvarCarta()
+    {
+        try
+        {
+            //Valida campos
+            if (string.IsNullOrEmpty(CartaModal.Titulo))
+                throw new Exception("O Título é obrigatório!");
+            if (string.IsNullOrEmpty(CartaModal.Setor))
+                throw new Exception("O Setor é obrigatório!");
+            if (string.IsNullOrEmpty(CartaModal.Cargo))
+                throw new Exception("O Cargo é obrigatório!");
+            if (string.IsNullOrEmpty(CartaModal.Descricao))
+                throw new Exception("A Descrição é obrigatória!");
+            if (string.IsNullOrEmpty(CartaModal.NomeImagem))
+                throw new Exception("A Imagem é obrigatória!");
+
+
+            switch (AcaoModal)
+            {
+                case "Nova Carta":
+                    ListaDeCartas.Add(CartaModal);
+                    break;
+                case "Editar Carta":
+                    var cartaEditada = ListaDeCartas.Single(p => p.ID == CartaModal.ID);
+                    cartaEditada.Titulo = CartaModal.Titulo;
+                    cartaEditada.Descricao = CartaModal.Descricao;
+                    cartaEditada.Setor = CartaModal.Setor;
+                    cartaEditada.Cargo = CartaModal.Cargo;
+                    cartaEditada.Ponto = CartaModal.Ponto;
+                    cartaEditada.NomeImagem = CartaModal.NomeImagem;
+                    cartaEditada.AtributosEspeciais = CartaModal.AtributosEspeciais;
+                    break;
+                default:
+                    break;
+            }
+            ListaDeCartas = ListaDeCartas.OrderBy(p => p.Titulo).ToList();
+            servicoDatabase.AtualizarCartas(ListaDeCartas);
+            modalRef.Hide();
+
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowInfo(ex.Message);
+        }
+    }
+
+    public void ExcluirCarta(Guid id)
+    {
+        var cartaExcluir = ListaDeCartas.Single(p => p.ID == id);
+        ListaDeCartas.Remove(cartaExcluir);
+        servicoDatabase.AtualizarCartas(ListaDeCartas);
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+    //Upload
+    public IFileListEntry ArquivoUploaded;
+    string NomeDoArquivo;
+    long TamanhoDoArquivo;
+    string ExtensaoDoArquivo;
+
+    public async Task EnviaFoto()
+    {
+        try
+        {
+            var dataatual = DateTime.Now;
+
+            if (string.IsNullOrWhiteSpace(NomeDoArquivo))
+                throw new Exception("O Arquivo do Documento é obrigatório.");
+
+            if (ExtensaoDoArquivo.ToUpper().Contains("JPG") == false && ExtensaoDoArquivo.ToUpper().Contains("PNG") == false && ExtensaoDoArquivo.ToUpper().Contains("JPEG") == false)
+                throw new Exception("Extensão do arquivo inválido, são só aceitos PNG, JPG e JPEG.");
+
+            if (ArquivoUploaded != null)
+            {
+                CartaModal.NomeImagem = CartaModal.ID.ToString() + NomeDoArquivo;
+                servicoDatabase.SalvaImagemCarta(CartaModal.NomeImagem, await ArquivoUploaded.Data.ToByteArray());
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError("Erro ao enviar o arquivo: " + ex.Message);
+        }
+    }
+
+    protected async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        try
+        {
+            ArquivoUploaded = files.FirstOrDefault();
+            NomeDoArquivo = ArquivoUploaded.Name;
+            TamanhoDoArquivo = ArquivoUploaded.Size;
+            ExtensaoDoArquivo = new System.IO.FileInfo(NomeDoArquivo).Extension;
+
+            if (ExtensaoDoArquivo.ToUpper().Contains("JPG") == false && ExtensaoDoArquivo.ToUpper().Contains("PNG") == false && ExtensaoDoArquivo.ToUpper().Contains("JPEG") == false)
+                throw new Exception("Extensão do arquivo inválido, são só aceitos PNG, JPG e JPEG.");
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            toastService.ShowError("Erro ao enviar o arquivo: " + ex.Message);
+        }
+    }
+
+
+}

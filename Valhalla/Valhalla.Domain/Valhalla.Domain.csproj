@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Models\" />
+    <None Remove="Enums\" />
+    <None Remove="Exceptions\" />
+    <None Remove="Entidades\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Entidades\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlazorInputFile\BlazorInputFile.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+    <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+</Project>

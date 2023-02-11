@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.App", "Valhalla.App\Valhalla.App.csproj", "{8E87A063-321F-4E65-973B-ECAEDDE239F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.Domain", "Valhalla.Domain\Valhalla.Domain.csproj", "{38B55DE7-C40E-48CF-AC0A-E4EDD48805F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.Infraestrutura", "Valhalla.Infraestrutura\Valhalla.Infraestrutura.csproj", "{EF36F130-D766-4E8A-9335-433DF3FDA46F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valhalla.UnitTest", "Valhalla.UnitTest\Valhalla.UnitTest.csproj", "{53EC0707-75A1-43DF-B159-8BECC184160F}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{601D496D-4841-4855-B01B-125675D82482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{62E052EC-A476-4671-BF66-53D247AD411C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E87A063-321F-4E65-973B-ECAEDDE239F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E87A063-321F-4E65-973B-ECAEDDE239F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E87A063-321F-4E65-973B-ECAEDDE239F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E87A063-321F-4E65-973B-ECAEDDE239F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B55DE7-C40E-48CF-AC0A-E4EDD48805F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B55DE7-C40E-48CF-AC0A-E4EDD48805F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B55DE7-C40E-48CF-AC0A-E4EDD48805F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B55DE7-C40E-48CF-AC0A-E4EDD48805F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF36F130-D766-4E8A-9335-433DF3FDA46F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF36F130-D766-4E8A-9335-433DF3FDA46F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF36F130-D766-4E8A-9335-433DF3FDA46F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF36F130-D766-4E8A-9335-433DF3FDA46F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53EC0707-75A1-43DF-B159-8BECC184160F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53EC0707-75A1-43DF-B159-8BECC184160F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53EC0707-75A1-43DF-B159-8BECC184160F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53EC0707-75A1-43DF-B159-8BECC184160F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{601D496D-4841-4855-B01B-125675D82482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{601D496D-4841-4855-B01B-125675D82482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{601D496D-4841-4855-B01B-125675D82482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{601D496D-4841-4855-B01B-125675D82482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62E052EC-A476-4671-BF66-53D247AD411C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62E052EC-A476-4671-BF66-53D247AD411C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62E052EC-A476-4671-BF66-53D247AD411C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62E052EC-A476-4671-BF66-53D247AD411C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B062DC0F-7C5C-42F2-A20A-73F0B5B9D1D0}
+	EndGlobalSection
+EndGlobal

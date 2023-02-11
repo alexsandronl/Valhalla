@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  valhalla.app:
+    image: ${DOCKER_REGISTRY-}valhalla
+    build:
+      context: .
+      dockerfile: Valhalla.App/Dockerfile

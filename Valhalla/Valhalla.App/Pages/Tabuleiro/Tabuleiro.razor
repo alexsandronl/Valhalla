@@ -1,0 +1,539 @@
+﻿@page "/Tabuleiro"
+@inherits PageBase
+@inject ParametrosGlobais parametros
+@inject ServicoDatabase servicoDatabase
+@inject IToastService toastService
+@layout EmptyLayout
+@using Blazored.Toast.Configuration
+
+<PageTitle>Valhalla - Tabuleiro @id</PageTitle>
+
+<style>
+    body, html {
+        height: 100% !important;
+    }
+</style>
+
+<BlazoredToasts Position="ToastPosition.BottomRight"
+                IconType="IconType.FontAwesome"
+                Timeout="3"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-thumbs-up"
+                ErrorIcon="fa fa-bug"
+                ShowProgressBar="true"
+                ShowCloseButton="false" />
+
+<AuthorizeView>
+    <Authorized>
+        @if (this.tabuleiro != null)
+        {
+            @if (tabuleiro.Jogador01ProntoParaComecar == false)
+            {
+                <button class="btn btn-lg" style="background-color: #B17943; color:white; position: absolute; top: 50%; left: 40%; right: 40% " @onclick="Jogador01Pronto">Estou pronto, vamos conheçar!</button>
+            }
+            <div class="vh-100" style="padding: 0px;">
+                <nav class="navbar navbar-light" style="height: 60px; padding: 5px;">
+                    <div class="navbar-brand" style="padding: 0px; width: 300px;">
+                        <img src="/images/logomarca.png" style="margin: 5px; height: 60px; padding: 0px;" class="d-inline-block align-top" alt="">
+                    </div>
+                    <div class="nav-fill" style="padding: 0px; vertical-align: middle; display: table-cell;">
+                        <p>
+                            <center>
+                                <span style="color: #eeeeee">
+                                    Tempo do Jogo: <strong>@(tabuleiro.Jogo.TempoDeJogo.Minutes.ToString("00")):@(tabuleiro?.Jogo.TempoDeJogo.Seconds.ToString("00"))</strong> - <strong>
+                                        @(tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Iniciada ? "Rodada: " + tabuleiro.Jogo.RodadaAtual.NumeroDaRodada.ToString("00") + "/" + tabuleiro.Jogo.NumeroDeRodadas.ToString("00") :
+                                            tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.AguardandoInicio ? "Aguardando o início da partida!" : "Partida finalizada! ")
+                                    </strong>&nbsp;
+                                </span>
+                                @if (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Iniciada)
+                                {
+                                    <button class="btn btn-sm btn-info d-inline-block align-middle @(classButtonPlay + " " + iconCss)" @onclick="TocaBackgroundMusic"></button>
+                                }
+                                @if (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Finalizada)
+                                {
+                                    <button class="btn btn-sm btn-success" @onclick="NavegarParaPaginaInicial">Voltar a página inicial</button>
+                                }
+                            </center>
+                        </p>
+                    </div>
+                    <div class="nav-fill" style="padding: 0px; vertical-align: middle; display: table-cell; width: 300px;">
+                        <p style="text-align: right;">
+                            <span style="color: lightblue">Rodadas ganha de @(tabuleiro.Jogo.Jogador01.PrimeiroNome): <strong>@(tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador01.ToString("00"))</strong></span>
+                            <br>
+                            <span style="color: lightblue">Rodadas ganha de @(tabuleiro.Jogo.Jogador02.PrimeiroNome): <strong>@(tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador02.ToString("00"))</strong></span>
+                        </p>
+                    </div>
+                </nav>
+                <div style="height: 88%;">
+                    <div style="height: 20%; width: 100%; text-align: center;">
+                        <Valhalla.App.Componentes.Carta IndicadorMonte="true" IndicadorCartaRotacionada="true" CustomStyle="margin-right: 10px; height: 100%; display: inline-block; text-align: center; " />
+                        @foreach (var carta in tabuleiro.Jogador02Deck)
+                        {
+                            <Valhalla.App.Componentes.Carta carta="carta" IndicadorCartaEscondida="true" IndicadorCartaRotacionada="true" CustomStyle="height: 100%; display: inline-block; text-align: center;" />
+                        }
+                    </div>
+                    <div style="height: 26%; width: 100%; text-align: center;">
+                        <div style="height: 100%; width: 17%; display: inline-block; text-align: center; object-fit: contain; position: relative; float: left;">
+                            <center>
+                                <Image Source="/images/avatar01.png" style="height: 50%; width: 30%; object-fit: contain; " />
+                                <br>
+                                <span style="color: white; font-size: 108%; object-fit: contain;">@tabuleiro.Jogo.Jogador02.PrimeiroNome</span>
+                                <br>
+                                @if (tabuleiro.TurnoAtual != null && TempoDoTurnoJogador02 != null)
+                                {
+                                    <span style="font-size: 90%; color: limegreen; object-fit: contain;">
+                                        Rodada: <strong>@(tabuleiro.Jogo.RodadaAtual.NumeroDaRodada.ToString("00"))/@(tabuleiro.Jogo.NumeroDeRodadas.ToString("00"))</strong>
+                                        <br />
+                                        Turno <strong>@((Math.Floor((double)tabuleiro.TurnoAtual.NumeroDoTurno/2)).ToString("00"))/@((tabuleiro.Jogo.NumeroDeTurnos / 2).ToString("00")) - @TempoDoTurnoJogador02?.Minutes.ToString("00"):@TempoDoTurnoJogador02?.Seconds.ToString("00")</strong>
+                                    </span>
+                                    <br>
+                                }
+                                @if (tabuleiro.Jogador02ProntoParaComecar == false)
+                                {
+                                    <button class="btn btn-sm btn-success" @onclick="Jogador02Pronto">Pronto!</button>
+                                }
+                            </center>
+                        </div>
+                        @foreach (var carta in tabuleiro.Jogador02Mesa)
+                        {
+                            <Valhalla.App.Componentes.Carta carta="carta" CustomStyle="cursor: pointer;height: 100%; max-width: 100%; display: inline-block; text-align: center;" />
+                        }
+                        <div style="height: 100%; vertical-align: middle; width: 15%; display: inline-block; text-align: center; position: relative; float: right;">
+                            <span style="color: white; font-size: 140%; object-fit: contain;">Pontos: @(tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Finalizada ? tabuleiro.Jogo.Rodadas.Last().PontosDoJogador02 : tabuleiro.Jogo.RodadaAtual?.PontosDoJogador02.ToString("00"))</span>
+                        </div>
+                    </div>
+                    <Divider />
+                    <div style="height: 26%; width: 100%; text-align: center;">
+                        <div style="height: 100%; width: 17%; display: inline-block; text-align: center; object-fit: contain; position: relative; float: left;">
+                            <center>
+                                <Image Source="/images/avatar02.png" style="height: 50%; width: 30%; object-fit: contain; " />
+                                <br>
+                                <span style="color: white; font-size: 108%; object-fit: contain;">@tabuleiro.Jogo.Jogador01.PrimeiroNome</span>
+                                <br>
+                                @if (tabuleiro.TurnoAtual != null && TempoDoTurnoJogador01 != null)
+                                {
+                                    <span style="font-size: 90%; color: limegreen; object-fit: contain;">
+                                        Rodada: <strong>@(tabuleiro.Jogo.RodadaAtual.NumeroDaRodada.ToString("00"))/@(tabuleiro.Jogo.NumeroDeRodadas.ToString("00"))</strong>
+                                        <br />
+                                        Turno <strong>@((Math.Floor((double)tabuleiro.TurnoAtual.NumeroDoTurno/2) + 1).ToString("00"))/@((tabuleiro.Jogo.NumeroDeTurnos / 2).ToString("00")) - @TempoDoTurnoJogador01?.Minutes.ToString("00"):@TempoDoTurnoJogador01?.Seconds.ToString("00")</strong>
+                                    </span>
+                                    <br>
+                                    @if (tabuleiro.RodadaAtual.NumeroDaRodada == 1 && tabuleiro.TurnoAtual.NumeroDoTurno == 1)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-secondary" @onclick="Jogador01PassaAVez">Passa a vez!</button>
+                                    }
+                                }
+
+                            </center>
+                        </div>
+                        @foreach (var carta in tabuleiro.Jogador01Mesa)
+                        {
+                            <Valhalla.App.Componentes.Carta carta="carta" CustomStyle="cursor: pointer;height: 100%; display: inline-block; text-align: center; " />
+                        }
+                        <div style="height: 100%; vertical-align: middle; width: 15%; display: inline-block; text-align: center; position: relative; float: right;">
+                            <span style="color: white; font-size: 140%; object-fit: contain;">Pontos: @(tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Finalizada ? tabuleiro.Jogo.Rodadas.Last().PontosDoJogador01 : tabuleiro.Jogo.RodadaAtual?.PontosDoJogador01.ToString("00"))</span>
+                        </div>
+                    </div>
+                    <div style="height: 20%; width: 100%; text-align: center;">
+                        @foreach (var carta in tabuleiro.Jogador01Deck)
+                        {
+                            <Valhalla.App.Componentes.Carta IndicadorDeck="true" tabuleiroRazor="this" carta="carta" CustomStyle="cursor: pointer;height: 100%; display: inline-block; text-align: center; " />
+                        }
+                        <Valhalla.App.Componentes.Carta IndicadorMonte="true" CustomStyle="margin-left: 10px;height: 100%; display: inline-block; text-align: center; " />
+                    </div>
+                </div>
+            </div>
+
+            <Modal @ref="modalRef">
+                <ModalContent Centered>
+                    <ModalHeader>
+                        <strong>FIM DE JOGO</strong>
+                    </ModalHeader>
+                    <ModalBody>
+                        <center>@Resultado</center>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button Color="Color.Light" Clicked="@HideModal">Fechar</Button>
+                        <Button Color=" Color.Success" Clicked="@NavegarParaPaginaInicial">Voltar a página inicial</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+        }
+    </Authorized>
+    <NotAuthorized>
+        Acesso não autorizado!
+    </NotAuthorized>
+</AuthorizeView>
+
+<audio id="player">
+    <source id="playerSource" src="" />
+</audio>
+
+<audio id="playerBackground" loop>
+    <source id="playerSourceBackground" src="" />
+</audio>
+
+@code
+{
+    public Guid id { get; set; } = Guid.NewGuid();
+    public Valhalla.Domain.Models.Tabuleiro tabuleiro { get; set; }
+    private Timer timerRelogio;
+    public TimeSpan? TempoDoTurnoJogador01;
+    public TimeSpan? TempoDoTurnoJogador02;
+    private bool JogaUmaCartaQuandoTempoAcabar = false;
+    private bool JogarComPc = true;
+    private Modal modalRef;
+    private string Resultado { get; set; }
+    private Valhalla.Domain.Entidades.Usuario UsuarioLogado { get; set; }
+
+    protected override void Constructor()
+    {
+        var lDotNetReference = DotNetObjectReference.Create(this);
+        JSRuntime.InvokeVoidAsync("GLOBAL.SetDotnetReference", lDotNetReference);
+
+        UsuarioLogado = servicoDatabase.BuscaTodosUsuarios().Single(p => p.Identificador == AuthenticationStateUser.Claims.First(p => p.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value);
+        var jogador01 = new Jogador()
+        {
+            ID = Guid.NewGuid(),
+            NomeCompleto = UsuarioLogado.NomeCompleto,
+            PrimeiroNome = UsuarioLogado.PrimeiroNome,
+            Identificacao = UsuarioLogado.Identificador,
+            Email = UsuarioLogado.Email
+        };
+
+        var jogador02 = new Jogador()
+        {
+            ID = Guid.NewGuid(),
+            NomeCompleto = "Computador",
+            PrimeiroNome = "Computador",
+            Identificacao = "0123456789",
+            Email = "computador@base1.com.br"
+        };
+
+        //Configuracoes bacanas
+        //3,3,6
+        //6,3,8 (testando)
+
+        tabuleiro = new Valhalla.Domain.Models.Tabuleiro(
+            servicoDatabase,
+            jogador01,
+            jogador02,
+            Convert.ToInt32(Environment.GetEnvironmentVariable("NumeroCartasIniciais")),
+            Convert.ToInt32(Environment.GetEnvironmentVariable("NumeroDeRodadasPorJogo")),
+            Convert.ToInt32(Environment.GetEnvironmentVariable("NumeroDeTurnosTotaisPorRada")),
+            TimeSpan.Parse(Environment.GetEnvironmentVariable("TempoPorTurno")),
+            id);
+        parametros.ListaDeTabuleiros.Add(tabuleiro);
+
+        timerRelogio = new Timer(e => Relogio_tick(), new AutoResetEvent(false), 1000, 1000); // fire every 1000 milliseconds (1 segundo)
+
+        if (JogarComPc)
+        {
+            tabuleiro.Jogador02ProntoParaComecar = true;
+        }
+
+        //Eventos
+        tabuleiro.Jogo.TerminaPartidaEvent += OnJogoTerminou;
+        tabuleiro.AIniciarProximaRodadaEvent += OnRodadaFinalizada;
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void Relogio_tick()
+    {
+        var tempo = (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Iniciada && tabuleiro.RodadaAtual != null && tabuleiro.TurnoAtual != null) ? DateTime.Now - tabuleiro.TurnoAtual.HoraInicio : null;
+        if (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Iniciada && tabuleiro.RodadaAtual != null && tabuleiro.TurnoAtual != null && tabuleiro.TurnoAtual.Jogador == tabuleiro.Jogo.Jogador01)
+        {
+            var temporestante = tabuleiro.Jogo.TempoPorTurno - tempo;
+            if (temporestante <= new TimeSpan())
+            {
+                TempoDoTurnoJogador01 = null;
+                TempoDoTurnoJogador02 = null;
+                //tempo acabou do jogador 01
+                //finaliza o turno
+                if ((tabuleiro.Jogador01Mesa.Count == 0 || JogaUmaCartaQuandoTempoAcabar) && tabuleiro.Jogador01Deck.Count > 0)
+                {
+                    var numeroDaCartaAleatoriaPraJogar = new Random().Next(0, tabuleiro.Jogador01Deck.Count - 1);
+                    TocaDarCarta();
+                    tabuleiro.JogaUmaCartaJogador01(tabuleiro.Jogador01Deck.ToArray()[numeroDaCartaAleatoriaPraJogar]);
+                }
+                else
+                {
+                    tabuleiro.PassaAVezJogador01();
+                }
+            }
+            else
+            {
+                TempoDoTurnoJogador01 = temporestante;
+                TempoDoTurnoJogador02 = null;
+            }
+        }
+        else if (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Iniciada && tabuleiro.RodadaAtual != null && tabuleiro.TurnoAtual != null && tabuleiro.TurnoAtual.Jogador == tabuleiro.Jogo.Jogador02)
+        {
+            var temporestante = tabuleiro.Jogo.TempoPorTurno - tempo;
+            if (temporestante <= new TimeSpan())
+            {
+                TempoDoTurnoJogador01 = null;
+                TempoDoTurnoJogador02 = null;
+                //tempo acabou do jogador 02
+                //finaliza o turno
+                if ((tabuleiro.Jogador02Mesa.Count == 0 || JogaUmaCartaQuandoTempoAcabar) && tabuleiro.Jogador02Deck.Count > 0)
+                {
+                    TocaDarCarta();
+                    ComputadorJogaUmaCartaAleatoria();
+                }
+                else
+                {
+                    ComputadorPassaAVez();
+                }
+            }
+            else
+            {
+                TempoDoTurnoJogador01 = null;
+                TempoDoTurnoJogador02 = temporestante;
+
+                if (JogarComPc && temporestante > new TimeSpan())
+                {
+                    var tempoParaJogar = new Random().Next(1, 5);
+                    if (temporestante < new TimeSpan(0, 0, Convert.ToInt32(tabuleiro.Jogo.TempoPorTurno.TotalSeconds) - tempoParaJogar))
+                    {
+                        if (tabuleiro.Jogador02Mesa.Count == 0 && tabuleiro.Jogador02Deck.Count > 0)
+                        {
+                            TocaDarCarta();
+                            ComputadorJogaUmaCartaAleatoria();
+                        }
+                        else if (tabuleiro.Jogador02Deck.Count == 0)
+                        {
+                            ComputadorPassaAVez();
+                        }
+                        else
+                        {
+                            var chanceDePassarAVez = new Random().Next(1, 5);
+                            if (chanceDePassarAVez == 1)
+                            {
+                                ComputadorPassaAVez();
+                            }
+                            else
+                            {
+                                TocaDarCarta();
+                                ComputadorJogaUmaCartaAleatoria();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        //desliga o time qdo terminar a partida
+        if (tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Finalizada || tabuleiro.Jogo.StatusDaPartida == Domain.Enums.PartidaStatusEnum.Abandonado)
+        {
+            timerRelogio.Dispose();
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ComputadorJogaUmaCartaAleatoria()
+    {
+        if (tabuleiro.Jogador02Deck.Count == 1)
+        {
+            tabuleiro.JogaUmaCartaJogador02(tabuleiro.Jogador02Deck.First());
+        }
+        else
+        {
+            toastService.ShowInfo(tabuleiro.Jogo.Jogador02.PrimeiroNome + " jogou uma carta");
+            var numeroDaCartaAleatoriaPraJogar = new Random().Next(0, tabuleiro.Jogador02Deck.Count - 1);
+            tabuleiro.JogaUmaCartaJogador02(tabuleiro.Jogador02Deck.ToArray()[numeroDaCartaAleatoriaPraJogar]);
+        }
+    }
+
+    private void ComputadorPassaAVez()
+    {
+        TocaJogadorPassouAVez();
+        toastService.ShowInfo(tabuleiro.Jogo.Jogador02.PrimeiroNome + " passou a vez");
+        tabuleiro.PassaAVezJogador02();
+    }
+
+    private void Jogador01PassaAVez()
+    {
+        TocaJogadorPassouAVez();
+        tabuleiro.PassaAVezJogador01();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async void Jogador01Pronto()
+    {
+        tabuleiro.Jogador01ProntoParaComecar = true;
+        await IniciaPartida();
+    }
+
+    private async void Jogador02Pronto()
+    {
+        tabuleiro.Jogador02ProntoParaComecar = true;
+        await IniciaPartida();
+    }
+
+    private async Task IniciaPartida()
+    {
+        if (tabuleiro.Jogador01ProntoParaComecar && tabuleiro.Jogador02ProntoParaComecar)
+        {
+            TocaBackgroundMusic();
+            toastService.ShowSuccess("Partida iniciada");
+            try
+            {
+                for (int i = 0; i < tabuleiro.Jogo.NumeroDeCartasIniciais; i++)
+                {
+                    TocaDarCarta();
+                    await Task.Delay(700);
+                }
+                //await Task.Delay(3000);
+                tabuleiro.IniciaJogo();
+            }
+            catch (Exception ex)
+            {
+                toastService.ShowError(ex.Message);
+            }
+
+        }
+    }
+
+    private void OnJogoTerminou()
+    {
+        if (contentButton == "Parar")
+            TocaBackgroundMusic();
+
+        var jogoasergravado = new Domain.Entidades.Jogo()
+        {
+            Jogador01 = UsuarioLogado,
+            DataHoraDoJogo = tabuleiro.Jogo.DataInicio.Value,
+            PontosJogador01 = tabuleiro.Jogo.PontosTotalJogador01.Value,
+            PontosJogador02 = tabuleiro.Jogo.PontosTotalJogador02.Value,
+            TempoDePartida = tabuleiro.Jogo.DataFim.Value - tabuleiro.Jogo.DataInicio.Value
+        };
+
+        if (tabuleiro.Jogo.JogadorGanhador == null)
+        {
+            TocaJogadorEmpatou();
+            Resultado = $"Você empatou, mas essa foi por pouco heim? Mas você ainda ganhou {tabuleiro.Jogo.PontosTotalJogador01} pontos!";
+            jogoasergravado.JogoStatusFinal = Domain.Entidades.Jogo.JogoStatusFinalEnum.Empatou;
+        }
+        else if (tabuleiro.Jogo.JogadorGanhador == tabuleiro.Jogo.Jogador01)
+        {
+            TocaJogadorGanhou();
+            Resultado = $"Parabéns, você ganhou o jogo por {tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador01}x{tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador02} e ganhou {tabuleiro.Jogo.PontosTotalJogador01} pontos.";
+            jogoasergravado.JogoStatusFinal = Domain.Entidades.Jogo.JogoStatusFinalEnum.Ganhou;
+        }
+        else
+        {
+            TocaJogadorPerdeu();
+            Resultado = $"Que pena, não foi desta vez, você perdeu por {tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador02}x{tabuleiro.Jogo.NumeroDePartidasGanhasDoJogador01}!";
+            jogoasergravado.JogoStatusFinal = Domain.Entidades.Jogo.JogoStatusFinalEnum.Perdeu;
+        }
+        modalRef.Show();
+
+        servicoDatabase.AdicionaNovoJogo(jogoasergravado);
+    }
+
+    private void OnRodadaFinalizada()
+    {
+        toastService.ShowSuccess("Iniciando uma nova rodada");
+    }
+
+    private void NavegarParaPaginaInicial()
+    {
+        nav.NavigateTo("/");
+    }
+
+    private Task HideModal()
+    {
+        return modalRef.Hide();
+    }
+
+
+    public async Task TocaDarCarta()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/carddrop.mp3");
+    }
+
+
+    public async Task TocaNovaRodada()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/iniciorodada.mp3");
+    }
+
+    private string contentButton = "Tocar";
+    private string classButtonPlay = "e-success";
+    private string iconCss = "oi oi-play-circle";
+
+    public async Task TocaBackgroundMusic()
+    {
+        if (contentButton == "Tocar")
+        {
+            await JSRuntime.InvokeVoidAsync("PlayAudioFileBackground", "/audios/background-music01.mp3", DotNetObjectReference.Create(this));
+        }
+        else if (contentButton == "Parar")
+        {
+            await JSRuntime.InvokeVoidAsync("StopAudioFile", DotNetObjectReference.Create(this));
+        }
+    }
+
+    [JSInvokable]
+    public async void HandleAudioPlayed()
+    {
+        contentButton = "Parar";
+        iconCss = "oi oi-media-stop";
+        classButtonPlay = "e-danger";
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public async void HandleAudioPaused()
+    {
+        contentButton = "Tocar";
+        iconCss = "oi oi-play-circle";
+        classButtonPlay = "e-success";
+        await InvokeAsync(StateHasChanged);
+    }
+
+    [JSInvokable]
+    public async void HandleAudioStoped()
+    {
+        contentButton = "Tocar";
+        iconCss = "oi oi-play-circle";
+        classButtonPlay = "e-success";
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+    public async Task TocaJogadorGanhou()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/wins.mp3");
+    }
+
+    public async Task TocaJogadorPassouAVez()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/passouavez.mp3");
+    }
+
+    public async Task TocaTempoAcabando()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/tempoacabando.mp3");
+    }
+
+    public async Task TocaJogadorPerdeu()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/lost.mp3");
+    }
+
+    public async Task TocaJogadorEmpatou()
+    {
+        await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/audios/ko.mp3");
+    }
+}

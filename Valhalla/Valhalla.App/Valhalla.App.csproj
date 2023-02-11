@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Description>Jogo de cartas</Description>
+    <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>5a37e95f-b1ff-44c0-b80e-3347f3e77ec8</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Valhalla.Domain\Valhalla.Domain.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Valhalla.Infraestrutura\Valhalla.Infraestrutura.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\BlazorInputFile\BlazorInputFile.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Blazored.Toast" Version="4.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="HtmlAgilityPack.NetCore" Version="1.5.0.1" />
+    <PackageReference Include="Blazorise" Version="1.2.0" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.2.0" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.2.0" />
+    <PackageReference Include="Blazorise.Components" Version="1.2.0" />
+    <PackageReference Include="Blazorise.DataGrid" Version="1.2.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Extensions\" />
+    <None Remove="Controllers\" />
+    <None Remove="Views\" />
+    <None Remove="Pages\Tabuleiro\" />
+    <None Remove="Pages\Administracao\" />
+    <None Remove="Componentes\" />
+    <None Remove="Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Views\" />
+    <Folder Include="Pages\Administracao\" />
+    <Folder Include="Componentes\" />
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Pages\FetchData.razor" />
+    <Content Remove="Pages\Counter.razor" />
+    <Content Remove="Componentes\Index.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Data\WeatherForecast.cs" />
+    <Compile Remove="Data\WeatherForecastService.cs" />
+  </ItemGroup>
+</Project>
